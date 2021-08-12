@@ -46,6 +46,7 @@ enum AuthExceptionCode {
 
 const _authErrorCodeMapping = {
   'AuthError:UserCanceled': AuthExceptionCode.userCanceled,
+  'AuthError:NegativeButton': AuthExceptionCode.userCanceled,
   'AuthError:Timeout': AuthExceptionCode.timeout,
 };
 
@@ -329,9 +330,9 @@ class MethodChannelBiometricStorage extends BiometricStorage {
 
   @override
   Future<String?> read(
-    String name,
-    PromptInfo promptInfo,
-  ) =>
+      String name,
+      PromptInfo promptInfo,
+      ) =>
       _transformErrors(_channel.invokeMethod<String>('read', <String, dynamic>{
         'name': name,
         ..._promptInfoForCurrentPlatform(promptInfo),
@@ -339,9 +340,9 @@ class MethodChannelBiometricStorage extends BiometricStorage {
 
   @override
   Future<bool?> delete(
-    String name,
-    PromptInfo promptInfo,
-  ) =>
+      String name,
+      PromptInfo promptInfo,
+      ) =>
       _transformErrors(_channel.invokeMethod<bool>('delete', <String, dynamic>{
         'name': name,
         ..._promptInfoForCurrentPlatform(promptInfo),
@@ -349,10 +350,10 @@ class MethodChannelBiometricStorage extends BiometricStorage {
 
   @override
   Future<void> write(
-    String name,
-    String content,
-    PromptInfo promptInfo,
-  ) =>
+      String name,
+      String content,
+      PromptInfo promptInfo,
+      ) =>
       _transformErrors(_channel.invokeMethod('write', <String, dynamic>{
         'name': name,
         'content': content,

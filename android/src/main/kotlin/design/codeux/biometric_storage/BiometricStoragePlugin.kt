@@ -54,6 +54,7 @@ enum class AuthenticationError(val code: Int) {
     Canceled(BiometricPrompt.ERROR_CANCELED),
     Timeout(BiometricPrompt.ERROR_TIMEOUT),
     UserCanceled(BiometricPrompt.ERROR_USER_CANCELED),
+    NegativeButton(BiometricPrompt.ERROR_NEGATIVE_BUTTON),
     Unknown(-1),
     /** Authentication valid, but unknown */
     Failed(-2),
@@ -224,11 +225,11 @@ class BiometricStoragePlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             BIOMETRIC_STRONG or BIOMETRIC_WEAK
         )
         return CanAuthenticateResponse.values().firstOrNull { it.code == response }
-                ?: throw Exception("Unknown response code {$response} (available: ${
-                    CanAuthenticateResponse
-                        .values()
-                        .contentToString()
-                }")
+            ?: throw Exception("Unknown response code {$response} (available: ${
+                CanAuthenticateResponse
+                    .values()
+                    .contentToString()
+            }")
     }
 
     private fun authenticate(
@@ -262,15 +263,15 @@ class BiometricStoragePlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         })
 
         val promptBuilder = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(promptInfo.title)
-                .setSubtitle(promptInfo.subtitle)
-                .setDescription(promptInfo.description)
-                .setConfirmationRequired(promptInfo.confirmationRequired)
+            .setTitle(promptInfo.title)
+            .setSubtitle(promptInfo.subtitle)
+            .setDescription(promptInfo.description)
+            .setConfirmationRequired(promptInfo.confirmationRequired)
 
         if (options.androidBiometricOnly) {
             promptBuilder
-            .setAllowedAuthenticators(BIOMETRIC_STRONG)
-            .setNegativeButtonText(promptInfo.negativeButton)
+                .setAllowedAuthenticators(BIOMETRIC_STRONG)
+                .setNegativeButtonText(promptInfo.negativeButton)
         } else {
             promptBuilder.setAllowedAuthenticators(DEVICE_CREDENTIAL or BIOMETRIC_STRONG)
         }
