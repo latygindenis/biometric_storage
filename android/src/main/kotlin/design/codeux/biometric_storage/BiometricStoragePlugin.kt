@@ -151,20 +151,24 @@ class BiometricStoragePlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 }
             }
             fun BiometricStorageFile.withAuth(mode: CipherMode, cb: BiometricStorageFile.(cipher: Cipher?) -> Unit) {
-                val cipher = if (mode == CipherMode.Encrypt) {
-                    cipherForEncrypt()
-                } else {
-                    cipherForDecrypt()
-                }
                 if (!options.authenticationRequired) {
-                    return cb(cipher)
-                }
-                val promptInfo = getAndroidPromptInfo()
-                authenticate(cipher, promptInfo, options, {
-                    cb(cipher)
-                }) { info ->
-                    result.error("AuthError:${info.error}", info.message.toString(), info.errorDetails)
-                    logger.error("AuthError: $info")
+                    return cb(if (mode == CipherMode.Encrypt) {
+                        cipherForEncrypt()
+                    } else {
+                        cipherForDecrypt()
+                    })
+                } else {
+                    val promptInfo = getAndroidPromptInfo()
+                    authenticate(null, promptInfo, options, {
+                        cb(if (mode == CipherMode.Encrypt) {
+                            cipherForEncrypt()
+                        } else {
+                            cipherForDecrypt()
+                        })
+                    }) { info ->
+                        result.error("AuthError:${info.error}", info.message.toString(), info.errorDetails)
+                        logger.error("AuthError: $info")
+                    }
                 }
             }
 
